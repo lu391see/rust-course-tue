@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
-fn main() {
-    let x = std::env::args()
+fn program(mut args: std::env::Args) {
+    let x = args
         .nth(1)
         .map(|s: String| {
             i32::from_str(&s)
@@ -15,4 +15,9 @@ fn main() {
     for i in x..10 {
         println!("{i}");
     };
+}
+
+fn main() {
+    let args = std::env::args();
+    program(args)
 }
