@@ -1,9 +1,10 @@
 use std::str::FromStr;
 
-fn program(mut args: std::env::Args) {
+fn program(args: Vec<String>) {
     let x = args
+        .iter()
         .nth(1)
-        .map(|s: String| {
+        .map(|s: &String| {
             i32::from_str(&s)
         })
         .unwrap_or(Ok(0))
@@ -18,6 +19,6 @@ fn program(mut args: std::env::Args) {
 }
 
 fn main() {
-    let args = std::env::args();
+    let args = std::env::args().collect();
     program(args)
 }
