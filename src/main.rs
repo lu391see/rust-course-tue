@@ -18,26 +18,33 @@ fn program(args: Vec<String>) {
     };
 }
 
-#[test]
-fn test_my_program(){
-    let test_vec = vec![String::from("foo"), String::from("1")];
-    program(test_vec);
-}
-
-#[test]
-fn test_my_program_42(){
-    let test_vec = vec![String::from("foo"), String::from("42")];
-    program(test_vec);
-}
-
-#[test]
-// #[should_panic] to test panic
-fn test_my_program_bar(){
-    let test_vec = vec![String::from("foo"), String::from("bar")];
-    program(test_vec);
-}
 
 fn main() {
     let args = std::env::args().collect();
     program(args)
+}
+
+
+#[cfg(test)]
+mod test {
+    use super::program;
+        
+    #[test]
+    fn test_my_program(){
+        let test_vec = vec![String::from("foo"), String::from("1")];
+        program(test_vec);
+    }
+
+    #[test]
+    fn test_my_program_42(){
+        let test_vec = vec![String::from("foo"), String::from("42")];
+        program(test_vec);
+    }
+
+    #[test]
+    // #[should_panic] to test panic
+    fn test_my_program_bar(){
+        let test_vec = vec![String::from("foo"), String::from("bar")];
+        program(test_vec);
+    }
 }
