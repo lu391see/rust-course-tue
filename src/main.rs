@@ -63,6 +63,7 @@ fn main() {
         Ok(_) => (),
         Err(error) => print!("error: {error}"),
     }
+    drop(handle);
     let height = Height {
         value: f64::from_str(&buf_height.trim_end_matches('\n')).unwrap(),
     };
