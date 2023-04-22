@@ -1,8 +1,27 @@
-use std::str::FromStr;
+use std::{str::FromStr, fmt::Error};
+
+fn check_weight(weight: f64) -> Result<f64, Error> {
+    if weight < 0.0 || weight > 200.0 {
+        eprintln!("The given weght is illegal! Needs to be within (0, 200)");
+        Err(Error)
+    } else {
+        Ok(weight)
+    }
+}
+
+fn check_height(height: f64) -> Result<f64, Error> {
+    if height < 0.0 || height > 2.0 {
+        eprintln!("The given height is illegal! Please give a height in centimeres within (0.0, 2.0)");
+        Err(Error)
+    } else {
+        Ok(height)
+    }
+}
 
 fn calc_bmi(weight: f64, height: f64) -> f64 {
-
-    return weight / (height*height)
+    let w = check_height(height).unwrap();
+    let h = check_weight(weight).unwrap();
+    return w / (h*h)
 }
 
 fn main() {
