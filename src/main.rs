@@ -34,10 +34,14 @@ fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
 }
 
 fn main() {
+    println!("\n<===== Welcome to my Rusty BMI Calculator =====>\n");
+
+    // open scope for IO handle
     let (weight, buf_height) = {
         let handle = std::io::stdin();
 
-        println!("Please enter your weight:");
+        // handle input for weight
+        println!("Please enter your weight in kilogramms [kg]:");
         let mut buf_weight = String::new();
         // let _ =std::io::stdout().flush();
         match handle.read_line(&mut buf_weight) {
@@ -45,9 +49,10 @@ fn main() {
             Err(error) => print!("error: {error}"),
         }
         let weight = Weight(f64::from_str(buf_weight.trim_end_matches('\n')).unwrap());
-        println!("Your entered weight: {buf_weight} kg");
+        println!("Your entered weight: {} kg", weight.0);
 
-        println!("Please enter your height:");
+        // handle input for height
+        println!("\nPlease enter your height in meters [m]:");
         let mut buf_height = String::new();
         match handle.read_line(&mut buf_height) {
             Ok(_) => (),
@@ -56,9 +61,9 @@ fn main() {
         (weight, buf_height)
     };
     let height = Height(f64::from_str(buf_height.trim_end_matches('\n')).unwrap());
-    println!("Your entered height: {buf_height}");
+    println!("Your entered height: {} m", height.0);
 
-    // weight / height
+    // bmi calculation
     let bmi = calc_bmi(weight, height);
     println!("Your BMI is {}", bmi.value);
 }
