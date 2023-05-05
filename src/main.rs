@@ -9,15 +9,16 @@ struct BodyMassIndex {
     category: BmiCategory,
 }
 
+#[derive(Debug)]
 enum BmiCategory {
-    SevereUnderweight,
+    // SevereUnderweight,
     ModerateUnderweight,
-    MildUnderweight,
+    // MildUnderweight,
     NormalRange,
     Overweight,
     ObeseClass1,
-    ObeseClass2,
-    ObeseClass3,
+    // ObeseClass2,
+    // ObeseClass3,
 }
 /*
 fn check_weight(weight: Weight) -> Result<f64, Error> {
@@ -42,7 +43,15 @@ fn check_height(height: Height) -> Result<f64, Error> {
 */
 fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
     let bmi = w.0 / (h.0 * h.0);
-    BodyMassIndex { value: bmi }
+
+    let range = match bmi {
+        x if x < 18.5 => BmiCategory::ModerateUnderweight,
+        x if x < 25.0 => BmiCategory::NormalRange,
+        x if x < 30.0 => BmiCategory::Overweight,
+        _ => BmiCategory::ObeseClass1,
+    };
+
+    BodyMassIndex { value: bmi, category: range }
 }
 
 fn main() {
@@ -77,5 +86,5 @@ fn main() {
 
     // bmi calculation
     let bmi = calc_bmi(weight, height);
-    println!("Your BMI is {}", bmi.value);
+    println!("Your BMI is {}, which is classified as {:?}", bmi.value, bmi.category);
 }
