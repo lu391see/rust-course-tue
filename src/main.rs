@@ -51,7 +51,10 @@ fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
         _ => BmiCategory::ObeseClass1,
     };
 
-    BodyMassIndex { value: bmi, category: range }
+    BodyMassIndex {
+        value: bmi,
+        category: range,
+    }
 }
 
 fn main() {
@@ -86,5 +89,8 @@ fn main() {
 
     // bmi calculation
     let bmi = calc_bmi(weight, height);
-    println!("Your BMI is {}, which is classified as {:?}", bmi.value, bmi.category);
+    println!(
+        "Your BMI is {}, which is classified as {:?}",
+        bmi.value, bmi.category
+    );
 }
