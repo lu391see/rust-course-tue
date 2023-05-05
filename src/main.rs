@@ -57,34 +57,34 @@ fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
     }
 }
 
+fn read_input_as_f64(prompt: &str) -> f64 {
+    let handle = std::io::stdin();
+    println!("{}", prompt);
+
+    let mut input = String::new();
+    // let _ =std::io::stdout().flush();
+    match handle.read_line(&mut input) {
+        Ok(_) => f64::from_str(input.trim().trim_end_matches('\n')).unwrap_or_else(|e| {
+            println!("There was an error while parsing: {}", e);
+            read_input_as_f64("Try again!")
+        }),
+
+        Err(e) => {
+            println!("Reading the input went wrong: {}", e);
+            read_input_as_f64("Try again!")
+        }
+    }
+}
+
 fn main() {
     println!("\n<===== Welcome to my Rusty BMI Calculator =====>\n");
 
-    // open scope for IO handle
-    let (weight, buf_height) = {
-        let handle = std::io::stdin();
+    let weight: Weight = Weight(read_input_as_f64(
+        "Please enter your weight in kilogramms [kg]:",
+    ));
+    println!("Your entered weight: {} kg", weight.0);
 
-        // handle input for weight
-        println!("Please enter your weight in kilogramms [kg]:");
-        let mut buf_weight = String::new();
-        // let _ =std::io::stdout().flush();
-        match handle.read_line(&mut buf_weight) {
-            Ok(_) => (),
-            Err(error) => print!("error: {error}"),
-        }
-        let weight = Weight(f64::from_str(buf_weight.trim_end_matches('\n')).unwrap());
-        println!("Your entered weight: {} kg", weight.0);
-
-        // handle input for height
-        println!("\nPlease enter your height in meters [m]:");
-        let mut buf_height = String::new();
-        match handle.read_line(&mut buf_height) {
-            Ok(_) => (),
-            Err(error) => print!("error: {error}"),
-        }
-        (weight, buf_height)
-    };
-    let height = Height(f64::from_str(buf_height.trim_end_matches('\n')).unwrap());
+    let height: Height = Height(read_input_as_f64("Please enter your height in meters [m]:"));
     println!("Your entered height: {} m", height.0);
 
     // bmi calculation
