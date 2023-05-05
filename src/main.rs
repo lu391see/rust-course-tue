@@ -40,7 +40,16 @@ fn check_height(height: Height) -> Result<f64, Error> {
         Ok(height.0)
     }
 }
-*/
+
+let mut index = String::new();
+io::stdin()
+    .read_line(&mut index)
+    .expect("Failed to read line");
+let index: usize = index
+.trim()
+.parse()
+.expect("Index entered was not a number"); */
+
 fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
     let bmi = w.0 / (h.0 * h.0);
 
@@ -97,15 +106,31 @@ fn main() {
 
 #[cfg(test)]
 mod test {
-    use crate::{calc_bmi, Height, Weight, BmiCategory};
+    use crate::{calc_bmi, BmiCategory, Height, Weight};
 
     #[test]
     fn test_bmi_obese() {
-        assert_eq!(calc_bmi(Weight(66.6), Height(1.42)).category, BmiCategory::ObeseClass1)
+        assert_eq!(
+            calc_bmi(Weight(66.6f64), Height(1.42f64)).category,
+            BmiCategory::ObeseClass1
+        )
     }
 
     #[test]
     fn test_bmi_underweight() {
-        assert_eq!(calc_bmi(Weight(12.3), Height(1.42)).category, BmiCategory::ModerateUnderweight)
+        assert_eq!(
+            calc_bmi(Weight(12.3f64), Height(1.42f64)).category,
+            BmiCategory::ModerateUnderweight
+        )
     }
+
+    #[test]
+    fn test_division_by_zero() {
+        assert_eq!(
+            calc_bmi(Weight(12.3f64), Height(-0.0)).category,
+            BmiCategory::ObeseClass1
+        )
+    }
+
+    // TODO: test negative inputs
 }
