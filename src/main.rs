@@ -9,7 +9,7 @@ struct BodyMassIndex {
     category: BmiCategory,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum BmiCategory {
     // SevereUnderweight,
     ModerateUnderweight,
@@ -93,4 +93,19 @@ fn main() {
         "Your BMI is {}, which is classified as {:?}",
         bmi.value, bmi.category
     );
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{calc_bmi, Height, Weight, BmiCategory};
+
+    #[test]
+    fn test_bmi_obese() {
+        assert_eq!(calc_bmi(Weight(66.6), Height(1.42)).category, BmiCategory::ObeseClass1)
+    }
+
+    #[test]
+    fn test_bmi_underweight() {
+        assert_eq!(calc_bmi(Weight(12.3), Height(1.42)).category, BmiCategory::ModerateUnderweight)
+    }
 }
