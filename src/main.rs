@@ -6,6 +6,18 @@ struct Weight(f64);
 
 struct BodyMassIndex {
     value: f64,
+    category: BmiCategory,
+}
+
+enum BmiCategory {
+    SevereUnderweight,
+    ModerateUnderweight,
+    MildUnderweight,
+    NormalRange,
+    Overweight,
+    ObeseClass1,
+    ObeseClass2,
+    ObeseClass3,
 }
 /*
 fn check_weight(weight: Weight) -> Result<f64, Error> {
