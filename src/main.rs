@@ -1,34 +1,17 @@
-use std::str::FromStr;
+use crate::bmi::{BmiCategory, BodyMassIndex};
 use crate::height::Height;
 use crate::weight::Weight;
+use std::str::FromStr;
 
+mod bmi;
+mod height;
 mod tests;
 mod weight;
-mod height;
-
-#[derive(Debug, PartialEq)]
-struct BodyMassIndex {
-    value: f64,
-    category: BmiCategory,
-}
-
-#[derive(Debug, PartialEq)]
-enum BmiCategory {
-    // SevereUnderweight,
-    ModerateUnderweight,
-    // MildUnderweight,
-    NormalRange,
-    Overweight,
-    ObeseClass1,
-    // ObeseClass2,
-    // ObeseClass3,
-}
 
 #[derive(Debug, PartialEq)]
 enum BmiError {
     HeightCannotBeZeroOrSmaller,
     WeightCannotBeZeroOrSmaller,
-    
 }
 /*
 fn check_weight(weight: Weight) -> Result<f64, Error> {
@@ -62,24 +45,14 @@ let index: usize = index
 
 fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     if h.0 <= 0.0 {
-        return Err(BmiError::HeightCannotBeZeroOrSmaller)
+        return Err(BmiError::HeightCannotBeZeroOrSmaller);
     }
     if w.0 <= 0.0 {
-        return Err(BmiError::WeightCannotBeZeroOrSmaller)
+        return Err(BmiError::WeightCannotBeZeroOrSmaller);
     }
     let bmi = w.0 / (h.0 * h.0);
 
-    let range = match bmi {
-        x if x < 18.5 => BmiCategory::ModerateUnderweight,
-        x if x < 25.0 => BmiCategory::NormalRange,
-        x if x < 30.0 => BmiCategory::Overweight,
-        _ => BmiCategory::ObeseClass1,
-    };
-
-    Ok(BodyMassIndex {
-        value: bmi,
-        category: range,
-    })
+    Ok(BodyMassIndex::new(bmi))
 }
 
 fn read_input_as_f64(prompt: &str) -> f64 {
@@ -118,8 +91,9 @@ fn main() {
     match bmi {
         Ok(bmi) => println!(
             "Your BMI is {}, which is classified as {:?}",
-            bmi.value, bmi.category
+            bmi.value(),
+            bmi.category()
         ),
-        Err(e) => println!("Error while calculating! {:?}", e)
+        Err(e) => println!("Error while calculating! {:?}", e),
     }
 }
