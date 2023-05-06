@@ -60,7 +60,10 @@ fn read_input_as_f64(prompt: &str, metric: &str) -> f64 {
     let amount = CustomType::<f64>::new(prompt)
         .with_formatter(&|i| format!("{:.2} {}", i, metric))
         .with_error_message("Please type a valid number")
-        .with_help_message(&format!("Check the right formatting with si metric: [{}]. Use decimal point as a separator", metric))
+        .with_help_message(&format!(
+            "Check the right formatting with si metric: [{}]. Use decimal point as a separator",
+            metric
+        ))
         .prompt();
 
     match amount {
@@ -80,11 +83,14 @@ fn main() {
 
     let weight: Weight = Weight(read_input_as_f64(
         "Please enter your weight in kilogramms [kg]:",
-        "kg"
+        "kg",
     ));
     log::debug!("Your entered weight: {} kg", weight.0);
 
-    let height: Height = Height(read_input_as_f64("Please enter your height in meters [m]:", "m"));
+    let height: Height = Height(read_input_as_f64(
+        "Please enter your height in meters [m]:",
+        "m",
+    ));
     log::debug!("Your entered height: {} m", height.0);
 
     let bmi = calc_bmi(weight, height);
