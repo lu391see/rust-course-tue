@@ -50,7 +50,10 @@ let index: usize = index
 .parse()
 .expect("Index entered was not a number"); */
 
-fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
+fn calc_bmi(w: Weight, h: Height) -> Option<BodyMassIndex> {
+    if h.0 <= 0.0 {
+        return None
+    }
     let bmi = w.0 / (h.0 * h.0);
 
     let range = match bmi {
@@ -60,10 +63,10 @@ fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
         _ => BmiCategory::ObeseClass1,
     };
 
-    BodyMassIndex {
+    Some(BodyMassIndex {
         value: bmi,
         category: range,
-    }
+    })
 }
 
 fn read_input_as_f64(prompt: &str) -> f64 {
@@ -98,38 +101,54 @@ fn main() {
 
     // bmi calculation
     let bmi = calc_bmi(weight, height);
-    println!(
-        "Your BMI is {}, which is classified as {:?}",
-        bmi.value, bmi.category
-    );
+
+    match bmi {
+        Some(bmi) => println!(
+            "Your BMI is {}, which is classified as {:?}",
+            bmi.value, bmi.category
+        ),
+        None => println!("Cannot use negative values!")
+    }
 }
 
 #[cfg(test)]
 mod test {
+    // keine Netzwerkzugriffe, Filesystezugriffe oder Environment Variablen setzen/ändern
     use crate::{calc_bmi, BmiCategory, Height, Weight};
 
     #[test]
     fn test_bmi_obese() {
         assert_eq!(
-            calc_bmi(Weight(66.6f64), Height(1.42f64)).category,
+            calc_bmi(Weight(66.6f64), Height(1.42f64)).unwrap().category,
             BmiCategory::ObeseClass1
         )
+    }
+    
+    /*
+    #[test]
+    #[should_panic]
+    fn test_should_panic() {
+        panic!()
+    } */
+
+    #[test]
+    fn test_bmi_value() {
+        let bmi = calc_bmi(Weight(12.3f64), Height(1.42f64));
+        assert_eq!(bmi.unwrap().value, 6.09998)
     }
 
     #[test]
     fn test_bmi_underweight() {
         assert_eq!(
-            calc_bmi(Weight(12.3f64), Height(1.42f64)).category,
+            calc_bmi(Weight(12.3f64), Height(1.42f64)).unwrap().category,
             BmiCategory::ModerateUnderweight
         )
     }
 
     #[test]
     fn test_division_by_zero() {
-        assert_eq!(
-            calc_bmi(Weight(12.3f64), Height(-0.0)).category,
-            BmiCategory::ObeseClass1
-        )
+        let opt = calc_bmi(Weight(12.3), Height(-0.0));
+        assert!(opt.is_none())
     }
 
     // TODO: test negative inputs
