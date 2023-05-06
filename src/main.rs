@@ -1,6 +1,8 @@
 use crate::bmi::BodyMassIndex;
 use crate::height::Height;
 use crate::weight::Weight;
+use std::fs::File;
+use std::io::Write;
 
 mod bmi;
 mod height;
@@ -12,41 +14,14 @@ enum BmiError {
     HeightCannotBeZeroOrSmaller,
     WeightCannotBeZeroOrSmaller,
 }
-/*
-fn check_weight(weight: Weight) -> Result<f64, Error> {
-    if weight.0 < 0.0 || weight.0 > 200.0 {
-        eprintln!("The given weght is illegal! Needs to be within (0, 200)");
-        Err(Error)
-    } else {
-        Ok(weight.0)
-    }
-}
-
-fn check_height(height: Height) -> Result<f64, Error> {
-    if height.0 < 0.0 || height.0 > 2.0 {
-        eprintln!(
-            "The given height is illegal! Please give a height in centimeres within (0.0, 2.0)"
-        );
-        Err(Error)
-    } else {
-        Ok(height.0)
-    }
-}
-
-let mut index = String::new();
-io::stdin()
-    .read_line(&mut index)
-    .expect("Failed to read line");
-let index: usize = index
-.trim()
-.parse()
-.expect("Index entered was not a number"); */
 
 fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     if h.0 <= 0.0 {
+        log::error!("The given height is non positive!");
         return Err(BmiError::HeightCannotBeZeroOrSmaller);
     }
     if w.0 <= 0.0 {
+        log::error!("The given weight is non positive!");
         return Err(BmiError::WeightCannotBeZeroOrSmaller);
     }
     let bmi = w.0 / (h.0 * h.0);
@@ -96,11 +71,28 @@ fn main() {
     let bmi = calc_bmi(weight, height);
 
     match bmi {
-        Ok(bmi) => println!(
-            "Your BMI is {}, which is classified as {:?}",
-            bmi.value(),
-            bmi.category()
-        ),
+        Ok(bmi) => {
+            println!(
+                "Your BMI is {}, which is classified as {:?}",
+                bmi.value(),
+                bmi.category()
+            );
+            let mut f = match File::options()
+                .create(true)
+                .append(true)
+                .open("database.txt")
+            {
+                Ok(file) => {
+                    log::debug!("created/appended file!");
+                    file
+                }
+                Err(e) => {
+                    log::error!("Creating/appending file failed: {e:?}");
+                    std::process::exit(1)
+                }
+            };
+            writeln!(&mut f, "{}", bmi.value()).unwrap();
+        }
         Err(e) => println!("Error while calculating! {:?}", e),
     }
 }
