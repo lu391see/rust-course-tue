@@ -100,7 +100,7 @@ fn main() {
             let mut f = match File::options()
                 .create(true)
                 .append(true)
-                .open("bmi.txt")
+                .open("database.txt")
             {
                 Ok(file) => {
                     log::debug!("created/appended file!");
