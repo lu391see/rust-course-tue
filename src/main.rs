@@ -96,8 +96,8 @@ fn main() {
                 "Your BMI is {}, which is classified as {:?}",
                 bmi.value(),
                 bmi.category());
-            let mut f = File::create("bmi.txt").unwrap();
-            f.write_all(bmi.value().to_string().as_bytes()).unwrap();
+            let mut f = File::options().create(true).append(true).open("bmi.txt").unwrap();
+            writeln!(&mut f, "{}", bmi.value()).unwrap();
         },
         Err(e) => println!("Error while calculating! {:?}", e),
     }
