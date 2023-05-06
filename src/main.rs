@@ -20,6 +20,12 @@ enum BmiCategory {
     // ObeseClass2,
     // ObeseClass3,
 }
+
+#[derive(Debug)]
+enum BmiError {
+    HeightCannotBeZeroOrSmaller,
+    
+}
 /*
 fn check_weight(weight: Weight) -> Result<f64, Error> {
     if weight.0 < 0.0 || weight.0 > 200.0 {
@@ -50,9 +56,9 @@ let index: usize = index
 .parse()
 .expect("Index entered was not a number"); */
 
-fn calc_bmi(w: Weight, h: Height) -> Option<BodyMassIndex> {
+fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     if h.0 <= 0.0 {
-        return None
+        return Err(BmiError::HeightCannotBeZeroOrSmaller)
     }
     let bmi = w.0 / (h.0 * h.0);
 
@@ -63,7 +69,7 @@ fn calc_bmi(w: Weight, h: Height) -> Option<BodyMassIndex> {
         _ => BmiCategory::ObeseClass1,
     };
 
-    Some(BodyMassIndex {
+    Ok(BodyMassIndex {
         value: bmi,
         category: range,
     })
@@ -103,11 +109,11 @@ fn main() {
     let bmi = calc_bmi(weight, height);
 
     match bmi {
-        Some(bmi) => println!(
+        Ok(bmi) => println!(
             "Your BMI is {}, which is classified as {:?}",
             bmi.value, bmi.category
         ),
-        None => println!("Cannot use negative values!")
+        Err(e) => println!("Error while calculating! {:?}", e)
     }
 }
 
@@ -123,7 +129,7 @@ mod test {
             BmiCategory::ObeseClass1
         )
     }
-    
+
     /*
     #[test]
     #[should_panic]
@@ -148,7 +154,7 @@ mod test {
     #[test]
     fn test_division_by_zero() {
         let opt = calc_bmi(Weight(12.3), Height(-0.0));
-        assert!(opt.is_none())
+        assert!(opt.is_err())
     }
 
     // TODO: test negative inputs
