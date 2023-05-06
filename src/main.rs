@@ -2,6 +2,8 @@ use crate::bmi::BodyMassIndex;
 use crate::height::Height;
 use crate::weight::Weight;
 use std::str::FromStr;
+use std::fs::File;
+use std::io::Write;
 
 mod bmi;
 mod height;
@@ -89,11 +91,17 @@ fn main() {
     let bmi = calc_bmi(weight, height);
 
     match bmi {
-        Ok(bmi) => println!(
-            "Your BMI is {}, which is classified as {:?}",
-            bmi.value(),
-            bmi.category()
-        ),
+        Ok(bmi) => {
+            println!(
+                "Your BMI is {}, which is classified as {:?}",
+                bmi.value(),
+                bmi.category());
+            let mut f = File::create("bmi.txt").unwrap();
+            f.write_all(bmi.value().to_string().as_bytes()).unwrap();
+        },
         Err(e) => println!("Error while calculating! {:?}", e),
     }
+
+    
+    
 }
