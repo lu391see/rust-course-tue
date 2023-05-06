@@ -1,24 +1,17 @@
+use crate::bmi::BodyMassIndex;
+use crate::height::Height;
+use crate::weight::Weight;
 use std::str::FromStr;
 
-struct Height(f64);
-
-struct Weight(f64);
-
-struct BodyMassIndex {
-    value: f64,
-    category: BmiCategory,
-}
+mod bmi;
+mod height;
+mod tests;
+mod weight;
 
 #[derive(Debug, PartialEq)]
-enum BmiCategory {
-    // SevereUnderweight,
-    ModerateUnderweight,
-    // MildUnderweight,
-    NormalRange,
-    Overweight,
-    ObeseClass1,
-    // ObeseClass2,
-    // ObeseClass3,
+enum BmiError {
+    HeightCannotBeZeroOrSmaller,
+    WeightCannotBeZeroOrSmaller,
 }
 /*
 fn check_weight(weight: Weight) -> Result<f64, Error> {
@@ -50,20 +43,16 @@ let index: usize = index
 .parse()
 .expect("Index entered was not a number"); */
 
-fn calc_bmi(w: Weight, h: Height) -> BodyMassIndex {
+fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
+    if h.0 <= 0.0 {
+        return Err(BmiError::HeightCannotBeZeroOrSmaller);
+    }
+    if w.0 <= 0.0 {
+        return Err(BmiError::WeightCannotBeZeroOrSmaller);
+    }
     let bmi = w.0 / (h.0 * h.0);
 
-    let range = match bmi {
-        x if x < 18.5 => BmiCategory::ModerateUnderweight,
-        x if x < 25.0 => BmiCategory::NormalRange,
-        x if x < 30.0 => BmiCategory::Overweight,
-        _ => BmiCategory::ObeseClass1,
-    };
-
-    BodyMassIndex {
-        value: bmi,
-        category: range,
-    }
+    Ok(BodyMassIndex::new(bmi))
 }
 
 fn read_input_as_f64(prompt: &str) -> f64 {
@@ -98,39 +87,13 @@ fn main() {
 
     // bmi calculation
     let bmi = calc_bmi(weight, height);
-    println!(
-        "Your BMI is {}, which is classified as {:?}",
-        bmi.value, bmi.category
-    );
-}
 
-#[cfg(test)]
-mod test {
-    use crate::{calc_bmi, BmiCategory, Height, Weight};
-
-    #[test]
-    fn test_bmi_obese() {
-        assert_eq!(
-            calc_bmi(Weight(66.6f64), Height(1.42f64)).category,
-            BmiCategory::ObeseClass1
-        )
+    match bmi {
+        Ok(bmi) => println!(
+            "Your BMI is {}, which is classified as {:?}",
+            bmi.value(),
+            bmi.category()
+        ),
+        Err(e) => println!("Error while calculating! {:?}", e),
     }
-
-    #[test]
-    fn test_bmi_underweight() {
-        assert_eq!(
-            calc_bmi(Weight(12.3f64), Height(1.42f64)).category,
-            BmiCategory::ModerateUnderweight
-        )
-    }
-
-    #[test]
-    fn test_division_by_zero() {
-        assert_eq!(
-            calc_bmi(Weight(12.3f64), Height(-0.0)).category,
-            BmiCategory::ObeseClass1
-        )
-    }
-
-    // TODO: test negative inputs
 }
