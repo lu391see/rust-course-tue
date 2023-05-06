@@ -4,6 +4,7 @@ struct Height(f64);
 
 struct Weight(f64);
 
+#[derive(Debug, PartialEq)]
 struct BodyMassIndex {
     value: f64,
     category: BmiCategory,
@@ -21,9 +22,10 @@ enum BmiCategory {
     // ObeseClass3,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum BmiError {
     HeightCannotBeZeroOrSmaller,
+    WeightCannotBeZeroOrSmaller,
     
 }
 /*
@@ -59,6 +61,9 @@ let index: usize = index
 fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     if h.0 <= 0.0 {
         return Err(BmiError::HeightCannotBeZeroOrSmaller)
+    }
+    if w.0 <= 0.0 {
+        return Err(BmiError::WeightCannotBeZeroOrSmaller)
     }
     let bmi = w.0 / (h.0 * h.0);
 
@@ -120,7 +125,7 @@ fn main() {
 #[cfg(test)]
 mod test {
     // keine Netzwerkzugriffe, Filesystezugriffe oder Environment Variablen setzen/ändern
-    use crate::{calc_bmi, BmiCategory, Height, Weight};
+    use crate::{calc_bmi, BmiCategory, Height, Weight, BmiError};
 
     #[test]
     fn test_bmi_obese() {
@@ -152,9 +157,18 @@ mod test {
     }
 
     #[test]
-    fn test_division_by_zero() {
-        let opt = calc_bmi(Weight(12.3), Height(-0.0));
-        assert!(opt.is_err())
+    fn test_height_zero() {
+        let res = calc_bmi(Weight(12.3), Height(0.0));
+        assert!(res.is_err());
+        assert_eq!(res.unwrap_err(), BmiError::HeightCannotBeZeroOrSmaller)
+    }
+
+    #[test]
+    fn test_weight_smaller_zero() {
+        let res = calc_bmi(Weight(-12.3), Height(1.0));
+        assert!(res.is_err());
+        // assert!(res.map_err(|e| e == BmiError::WeightCannotBeZeroOrSmaller).unwrap_or(false))
+        assert_eq!(res.unwrap_err(), BmiError::WeightCannotBeZeroOrSmaller)
     }
 
     // TODO: test negative inputs
