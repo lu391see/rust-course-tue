@@ -1,10 +1,10 @@
 use std::str::FromStr;
+use crate::height::Height;
+use crate::weight::Weight;
 
 mod tests;
-
-struct Height(f64);
-
-struct Weight(f64);
+mod weight;
+mod height;
 
 #[derive(Debug, PartialEq)]
 struct BodyMassIndex {
