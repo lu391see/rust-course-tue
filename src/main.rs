@@ -97,11 +97,20 @@ fn main() {
                 bmi.value(),
                 bmi.category()
             );
-            let mut f = File::options()
+            let mut f = match File::options()
                 .create(true)
                 .append(true)
                 .open("bmi.txt")
-                .unwrap();
+            {
+                Ok(file) => {
+                    log::debug!("created/appended file!");
+                    file
+                }
+                Err(e) => {
+                    log::error!("Creating/appending file failed: {e:?}");
+                    std::process::exit(1)
+                }
+            };
             writeln!(&mut f, "{}", bmi.value()).unwrap();
         }
         Err(e) => println!("Error while calculating! {:?}", e),
