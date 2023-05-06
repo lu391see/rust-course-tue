@@ -1,15 +1,17 @@
 #[cfg(test)]
 mod tests {
     // keine Netzwerkzugriffe, Filesystezugriffe oder Environment Variablen setzen/ändern
-    use crate::{calc_bmi, BmiCategory, BmiError, Height, Weight};
+    use crate::{bmi::BmiCategory, calc_bmi, BmiError, Height, Weight};
 
     use float_eq::assert_float_eq;
 
     #[test]
     fn test_bmi_obese() {
         assert_eq!(
-            calc_bmi(Weight(66.6f64), Height(1.42f64)).unwrap().category(),
-            &BmiCategory::ObeseClass1
+            *calc_bmi(Weight(66.6f64), Height(1.42f64))
+                .unwrap()
+                .category(),
+            BmiCategory::ObeseClass1
         )
     }
 
@@ -29,8 +31,10 @@ mod tests {
     #[test]
     fn test_bmi_underweight() {
         assert_eq!(
-            calc_bmi(Weight(12.3f64), Height(1.42f64)).unwrap().category(),
-            &BmiCategory::ModerateUnderweight
+            *calc_bmi(Weight(12.3f64), Height(1.42f64))
+                .unwrap()
+                .category(),
+            BmiCategory::ModerateUnderweight
         )
     }
 

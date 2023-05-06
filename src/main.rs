@@ -1,4 +1,4 @@
-use crate::bmi::{BmiCategory, BodyMassIndex};
+use crate::bmi::BodyMassIndex;
 use crate::height::Height;
 use crate::weight::Weight;
 use std::str::FromStr;
