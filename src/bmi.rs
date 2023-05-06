@@ -16,6 +16,7 @@ pub struct BodyMassIndex {
     category: BmiCategory,
 }
 
+// impl mit getter und setter methoden um felder nicht public zu machen
 impl BodyMassIndex {
     pub fn new(bmi: f64) -> BodyMassIndex {
         let range = match bmi {
@@ -36,6 +37,7 @@ impl BodyMassIndex {
     }
 
     pub fn category(&self) -> &BmiCategory {
-        &self.category // because it is so small, one can instead use Clone and Copy trait for enum -> then, no reference is needed
+        // because it is so small, one can instead use Clone and Copy trait for enum -> then, no reference is needed
+        &self.category
     }
 }

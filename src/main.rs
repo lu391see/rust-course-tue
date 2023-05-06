@@ -1,7 +1,6 @@
 use crate::bmi::BodyMassIndex;
 use crate::height::Height;
 use crate::weight::Weight;
-use std::str::FromStr;
 
 mod bmi;
 mod height;
@@ -55,21 +54,26 @@ fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     Ok(BodyMassIndex::new(bmi))
 }
 
-fn read_input_as_f64(prompt: &str) -> f64 {
-    let handle = std::io::stdin();
-    println!("{}", prompt);
+fn read_input_as_f64(prompt: &str, metric: &str) -> f64 {
+    use inquire::CustomType;
 
-    let mut input = String::new();
-    // let _ =std::io::stdout().flush();
-    match handle.read_line(&mut input) {
-        Ok(_) => f64::from_str(input.trim().trim_end_matches('\n')).unwrap_or_else(|e| {
-            println!("There was an error while parsing: {}", e);
-            read_input_as_f64("Try again!")
-        }),
+    let amount = CustomType::<f64>::new(prompt)
+        .with_formatter(&|i| format!("{:.2} {}", i, metric))
+        .with_error_message("Please type a valid number")
+        .with_help_message(&format!(
+            "Check the right formatting with si metric: [{}]. Use decimal point as a separator",
+            metric
+        ))
+        .prompt();
 
+    match amount {
+        Ok(x) => {
+            log::debug!("Entered value: {}", x);
+            x
+        }
         Err(e) => {
-            println!("Reading the input went wrong: {}", e);
-            read_input_as_f64("Try again!")
+            log::error!("Couldn't process input: {}", e);
+            read_input_as_f64("Try again!", metric)
         }
     }
 }
@@ -79,13 +83,16 @@ fn main() {
 
     let weight: Weight = Weight(read_input_as_f64(
         "Please enter your weight in kilogramms [kg]:",
+        "kg",
     ));
-    println!("Your entered weight: {} kg", weight.0);
+    log::debug!("Your entered weight: {} kg", weight.0);
 
-    let height: Height = Height(read_input_as_f64("Please enter your height in meters [m]:"));
-    println!("Your entered height: {} m", height.0);
+    let height: Height = Height(read_input_as_f64(
+        "Please enter your height in meters [m]:",
+        "m",
+    ));
+    log::debug!("Your entered height: {} m", height.0);
 
-    // bmi calculation
     let bmi = calc_bmi(weight, height);
 
     match bmi {
