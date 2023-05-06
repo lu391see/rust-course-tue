@@ -14,41 +14,14 @@ enum BmiError {
     HeightCannotBeZeroOrSmaller,
     WeightCannotBeZeroOrSmaller,
 }
-/*
-fn check_weight(weight: Weight) -> Result<f64, Error> {
-    if weight.0 < 0.0 || weight.0 > 200.0 {
-        eprintln!("The given weght is illegal! Needs to be within (0, 200)");
-        Err(Error)
-    } else {
-        Ok(weight.0)
-    }
-}
-
-fn check_height(height: Height) -> Result<f64, Error> {
-    if height.0 < 0.0 || height.0 > 2.0 {
-        eprintln!(
-            "The given height is illegal! Please give a height in centimeres within (0.0, 2.0)"
-        );
-        Err(Error)
-    } else {
-        Ok(height.0)
-    }
-}
-
-let mut index = String::new();
-io::stdin()
-    .read_line(&mut index)
-    .expect("Failed to read line");
-let index: usize = index
-.trim()
-.parse()
-.expect("Index entered was not a number"); */
 
 fn calc_bmi(w: Weight, h: Height) -> Result<BodyMassIndex, BmiError> {
     if h.0 <= 0.0 {
+        log::error!("The given height is non positive!");
         return Err(BmiError::HeightCannotBeZeroOrSmaller);
     }
     if w.0 <= 0.0 {
+        log::error!("The given weight is non positive!");
         return Err(BmiError::WeightCannotBeZeroOrSmaller);
     }
     let bmi = w.0 / (h.0 * h.0);
